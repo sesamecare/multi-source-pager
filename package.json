@@ -61,7 +61,6 @@
     "vitest": "^1.4.0"
   },
   "dependencies": {
-    "fflate": "^0.8.2",
     "universal-base64": "^2.1.0"
   }
 }
