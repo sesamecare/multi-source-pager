@@ -2,17 +2,17 @@ import { describe, it, expect } from 'vitest';
 
 import { MockLetterSource, mockDoubleLetters, mockLetters } from '../__tests__/LetterDataSource';
 
-import { multiSourcePager } from './index';
+import { oneShotPager } from './index';
 
 // Comparator for sorting by cursor (ISO date)
 const comparator = (a: string, b: string) => a.localeCompare(b);
 
-describe('multiSourcePager', () => {
+describe('stateful pager', () => {
   it('should return the first page of results sorted by date', async () => {
     const dataSourceA = new MockLetterSource(mockLetters);
     const dataSourceB = new MockLetterSource(mockDoubleLetters);
 
-    const p1 = await multiSourcePager({
+    const p1 = await oneShotPager({
       comparator,
       pageSize: 3,
     }, dataSourceA, dataSourceB);
@@ -22,28 +22,27 @@ describe('multiSourcePager', () => {
     expect(p1.results).toMatchInlineSnapshot(`
       [
         {
-          "cursor": "2023-01-01T00:00:00.000Z#A",
+          "cursor": "WyIyMDIzLTAxLTAxVDAwOjAwOjAwLjAwMFojQSJd",
           "data": "A",
           "type": "letter",
         },
         {
-          "cursor": "2023-01-01T00:00:00.000Z#AA",
+          "cursor": "WyIyMDIzLTAxLTAxVDAwOjAwOjAwLjAwMFojQSIsIjIwMjMtMDEtMDFUMDA6MDA6MDAuMDAwWiNBQSJd",
           "data": "AA",
           "type": "letter",
         },
         {
-          "cursor": "2023-01-01T00:00:00.000Z#AAA",
+          "cursor": "WyIyMDIzLTAxLTAxVDAwOjAwOjAwLjAwMFojQSIsIjIwMjMtMDEtMDFUMDA6MDA6MDAuMDAwWiNBQUEiXQ==",
           "data": "AAA",
           "type": "letter",
         },
       ]
     `);
-    expect(p1.cursor).toBe('WyIyMDIzLTAxLTAxVDAwOjAwOjAwLjAwMFojQSIsIjIwMjMtMDEtMDFUMDA6MDA6MDAuMDAwWiNBQUEiXQ==');
 
-    const p2 = await multiSourcePager({
+    const p2 = await oneShotPager({
       comparator,
       pageSize: 3,
-      cursor: p1.cursor,
+      cursor: p1.results[p1.results.length - 1].cursor,
     }, dataSourceA, dataSourceB);
 
     expect(p2.results.length).toBe(3);
@@ -51,67 +50,67 @@ describe('multiSourcePager', () => {
     expect(p2.results).toMatchInlineSnapshot(`
       [
         {
-          "cursor": "2023-01-02T00:00:00.000Z#B",
+          "cursor": "WyIyMDIzLTAxLTAyVDAwOjAwOjAwLjAwMFojQiIsIjIwMjMtMDEtMDFUMDA6MDA6MDAuMDAwWiNBQUEiXQ==",
           "data": "B",
           "type": "letter",
         },
         {
-          "cursor": "2023-01-02T00:00:00.000Z#BB",
+          "cursor": "WyIyMDIzLTAxLTAyVDAwOjAwOjAwLjAwMFojQiIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQiJd",
           "data": "BB",
           "type": "letter",
         },
         {
-          "cursor": "2023-01-02T00:00:00.000Z#BBB",
+          "cursor": "WyIyMDIzLTAxLTAyVDAwOjAwOjAwLjAwMFojQiIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
           "data": "BBB",
           "type": "letter",
         },
       ]
     `);
 
-    const p3 = await multiSourcePager({
+    const p3 = await oneShotPager({
       comparator,
       pageSize: 5,
-      cursor: p2.cursor,
+      cursor: p2.results[p2.results.length - 1].cursor,
     }, dataSourceA, dataSourceB);
     expect(p3.results).toMatchInlineSnapshot(`
       [
         {
-          "cursor": "2023-01-03T00:00:00.000Z#C",
+          "cursor": "WyIyMDIzLTAxLTAzVDAwOjAwOjAwLjAwMFojQyIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
           "data": "C",
           "type": "letter",
         },
         {
-          "cursor": "2023-01-04T00:00:00.000Z#D",
+          "cursor": "WyIyMDIzLTAxLTA0VDAwOjAwOjAwLjAwMFojRCIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
           "data": "D",
           "type": "letter",
         },
         {
-          "cursor": "2023-01-05T00:00:00.000Z#E",
+          "cursor": "WyIyMDIzLTAxLTA1VDAwOjAwOjAwLjAwMFojRSIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
           "data": "E",
           "type": "letter",
         },
         {
-          "cursor": "2023-01-06T00:00:00.000Z#FF",
+          "cursor": "WyIyMDIzLTAxLTA1VDAwOjAwOjAwLjAwMFojRSIsIjIwMjMtMDEtMDZUMDA6MDA6MDAuMDAwWiNGRiJd",
           "data": "FF",
           "type": "letter",
         },
         {
-          "cursor": "2023-01-07T00:00:00.000Z#GG",
+          "cursor": "WyIyMDIzLTAxLTA1VDAwOjAwOjAwLjAwMFojRSIsIjIwMjMtMDEtMDdUMDA6MDA6MDAuMDAwWiNHRyJd",
           "data": "GG",
           "type": "letter",
         },
       ]
     `);
 
-    const p4 = await multiSourcePager({
+    const p4 = await oneShotPager({
       comparator,
       pageSize: 5,
-      cursor: p3.cursor,
+      cursor: p3.results[p3.results.length - 1].cursor,
     }, dataSourceA, dataSourceB);
     expect(p4.results).toMatchInlineSnapshot(`
       [
         {
-          "cursor": "2023-01-08T00:00:00.000Z#HH",
+          "cursor": "WyIyMDIzLTAxLTA1VDAwOjAwOjAwLjAwMFojRSIsIjIwMjMtMDEtMDhUMDA6MDA6MDAuMDAwWiNISCJd",
           "data": "HH",
           "type": "letter",
         },

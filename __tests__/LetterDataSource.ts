@@ -9,7 +9,7 @@ export interface LetterResult {
 export class MockLetterSource implements DataSource<LetterResult> {
   constructor(private results: LetterResult[]) {}
 
-  async getResults(cursor: string | undefined, limit: number) {
+  async getResults(cursor: string | undefined, forward: boolean, limit: number) {
     const startIndex = this.results.findIndex(result => result.cursor > (cursor ?? ''));
     return {
       total: this.results.length,
