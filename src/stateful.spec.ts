@@ -8,18 +8,20 @@ import { statefulPager } from './stateful';
 const comparator = (a: string, b: string) => a.localeCompare(b);
 
 describe('stateful pager', () => {
-  it('should return the first page of results sorted by date', async () => {
+  it('should return the results in order', async () => {
     const dataSourceA = new MockLetterSource(mockLetters);
     const dataSourceB = new MockLetterSource(mockDoubleLetters);
 
-    const pager = await statefulPager({
-      comparator,
-    }, dataSourceA, dataSourceB);
+    for (let i = 0; i < 5; i += 1) {
+      const pager = await statefulPager({
+        comparator,
+        minPageSize: i,
+      }, dataSourceA, dataSourceB);
 
-    const p1 = await pager.getNextResults(3);
-    expect(p1.results.length).toBe(3);
-    expect(p1.total).toBe(12);
-    expect(p1.results).toMatchInlineSnapshot(`
+      const p1 = await pager.getNextResults(3);
+      expect(p1.results.length).toBe(3);
+      expect(p1.total).toBe(12);
+      expect(p1.results).toMatchInlineSnapshot(`
       [
         {
           "cursor": "WyIyMDIzLTAxLTAxVDAwOjAwOjAwLjAwMFojQSJd",
@@ -39,10 +41,10 @@ describe('stateful pager', () => {
       ]
     `);
 
-    const p2 = await pager.getNextResults(3);
-    expect(p2.results.length).toBe(3);
-    expect(p2.total).toBe(12);
-    expect(p2.results).toMatchInlineSnapshot(`
+      const p2 = await pager.getNextResults(3);
+      expect(p2.results.length).toBe(3);
+      expect(p2.total).toBe(12);
+      expect(p2.results).toMatchInlineSnapshot(`
       [
         {
           "cursor": "WyIyMDIzLTAxLTAyVDAwOjAwOjAwLjAwMFojQiIsIjIwMjMtMDEtMDFUMDA6MDA6MDAuMDAwWiNBQUEiXQ==",
@@ -62,8 +64,8 @@ describe('stateful pager', () => {
       ]
     `);
 
-    const p3 = await pager.getNextResults(5);
-    expect(p3.results).toMatchInlineSnapshot(`
+      const p3 = await pager.getNextResults(5);
+      expect(p3.results).toMatchInlineSnapshot(`
       [
         {
           "cursor": "WyIyMDIzLTAxLTAzVDAwOjAwOjAwLjAwMFojQyIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
@@ -93,8 +95,8 @@ describe('stateful pager', () => {
       ]
     `);
 
-    const p4 = await pager.getNextResults(5);
-    expect(p4.results).toMatchInlineSnapshot(`
+      const p4 = await pager.getNextResults(5);
+      expect(p4.results).toMatchInlineSnapshot(`
       [
         {
           "cursor": "WyIyMDIzLTAxLTA1VDAwOjAwOjAwLjAwMFojRSIsIjIwMjMtMDEtMDhUMDA6MDA6MDAuMDAwWiNISCJd",
@@ -103,5 +105,6 @@ describe('stateful pager', () => {
         },
       ]
     `);
+    }
   });
 });

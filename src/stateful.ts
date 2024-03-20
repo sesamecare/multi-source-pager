@@ -25,6 +25,8 @@ export function statefulPager<Types extends Array<DataSource<ResultWithCursor>>>
     comparator: (a: string, b: string) => number;
     // Fetch initial results after this cursor
     cursor?: string;
+    // Never fetch less than this many items
+    minPageSize?: number;
   },
   ...dataSources: Types
 ): CollatedDatasource<ExtractResultType<Types[number]>> {
@@ -43,7 +45,7 @@ export function statefulPager<Types extends Array<DataSource<ResultWithCursor>>>
           }
           const needed = pageSize - (results[index]?.length || 0);
           const lastCursor = results[index] ? results[index][results[index].length - 1]?.result.cursor : undefined;
-          const newResults = await dataSource.getResults(lastCursor || cursors[index], true, pageSize);
+          const newResults = await dataSource.getResults(lastCursor || cursors[index], true, options.minPageSize ? Math.max(options.minPageSize, needed) : needed);
           if (newResults.results.length < needed) {
             isCompleted[index] = true;
           }
