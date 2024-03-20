@@ -14,6 +14,8 @@ export function toCursor(cursors: string[]) {
   return encode(JSON.stringify(cursors));
 }
 
+type ExtractResultType<DS> = DS extends DataSource<infer R> ? R : never;
+
 /**
  * Return a page of results from multiple data sources based on an
  * aggregate cursor and a comparison function to sort the results.
@@ -27,7 +29,7 @@ export async function multiSourcePager<Types extends Array<DataSource<ResultWith
     cursor?: string;
   },
   ...dataSources: Types
-) {
+): Promise<{ cursor: string; results: ExtractResultType<Types[number]>[]; total?: number }> {
   const cursors: string[] = getCursorArray(options.cursor);
 
   let sumTotal: number | undefined = 0;
@@ -61,7 +63,7 @@ export async function multiSourcePager<Types extends Array<DataSource<ResultWith
     cursors[index] = sorted[i].result.cursor;
   });
   return {
-    results: sorted.map(({ result }) => result),
+    results: sorted.map(({ result }) => result) as ExtractResultType<Types[number]>[],
     cursor: toCursor(cursors),
     total: sumTotal,
   };
