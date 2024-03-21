@@ -3,14 +3,15 @@ import { describe, it, expect } from 'vitest';
 import { MockLetterSource, mockDoubleLetters, mockLetters } from '../__tests__/LetterDataSource';
 
 import { statefulPager } from './stateful';
+import { withFilter } from './FilteredDataSource';
 
 // Comparator for sorting by cursor (ISO date)
 const comparator = (a: string, b: string) => a.localeCompare(b);
 
 describe('stateful pager', () => {
+  const dataSourceA = new MockLetterSource(mockLetters);
+  const dataSourceB = new MockLetterSource(mockDoubleLetters);
   it('should return the results in order', async () => {
-    const dataSourceA = new MockLetterSource(mockLetters);
-    const dataSourceB = new MockLetterSource(mockDoubleLetters);
 
     for (let i = 0; i < 5; i += 1) {
       const pager = await statefulPager({
@@ -106,5 +107,51 @@ describe('stateful pager', () => {
       ]
     `);
     }
+  });
+
+  it.only('should work with filters', async () => {
+    const pager = await statefulPager({
+      comparator,
+    }, withFilter(dataSourceA, (r) => !!(r.data.length % 2)), withFilter(dataSourceB, (r) => !!(r.data.length % 2)));
+    const p1 = await pager.getNextResults(10);
+    expect(p1.results).toMatchInlineSnapshot(`
+      [
+        {
+          "cursor": "WyIyMDIzLTAxLTAxVDAwOjAwOjAwLjAwMFojQSJd",
+          "data": "A",
+          "type": "letter",
+        },
+        {
+          "cursor": "WyIyMDIzLTAxLTAxVDAwOjAwOjAwLjAwMFojQSIsIjIwMjMtMDEtMDFUMDA6MDA6MDAuMDAwWiNBQUEiXQ==",
+          "data": "AAA",
+          "type": "letter",
+        },
+        {
+          "cursor": "WyIyMDIzLTAxLTAyVDAwOjAwOjAwLjAwMFojQiIsIjIwMjMtMDEtMDFUMDA6MDA6MDAuMDAwWiNBQUEiXQ==",
+          "data": "B",
+          "type": "letter",
+        },
+        {
+          "cursor": "WyIyMDIzLTAxLTAyVDAwOjAwOjAwLjAwMFojQiIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
+          "data": "BBB",
+          "type": "letter",
+        },
+        {
+          "cursor": "WyIyMDIzLTAxLTAzVDAwOjAwOjAwLjAwMFojQyIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
+          "data": "C",
+          "type": "letter",
+        },
+        {
+          "cursor": "WyIyMDIzLTAxLTA0VDAwOjAwOjAwLjAwMFojRCIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
+          "data": "D",
+          "type": "letter",
+        },
+        {
+          "cursor": "WyIyMDIzLTAxLTA1VDAwOjAwOjAwLjAwMFojRSIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
+          "data": "E",
+          "type": "letter",
+        },
+      ]
+    `);
   });
 });
