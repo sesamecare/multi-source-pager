@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { MockLetterSource, mockDoubleLetters, mockLetters } from '../__tests__/LetterDataSource';
 
 import { multiSourcePager } from './multiSourcePager';
-import { queuedDataSource } from './queuedDataSource';
+import { asDataGenerator } from './asDataGenerator';
 
 // Comparator for sorting by cursor (ISO date)
 const comparator = (a: string, b: string) => a.localeCompare(b);
@@ -112,7 +112,7 @@ describe('multi source pager', () => {
     const dataSourceB = new MockLetterSource(mockDoubleLetters, 5);
     const pager = await multiSourcePager({
       comparator,
-    }, queuedDataSource(dataSourceA, (r) => !!(r.data.length % 2)), queuedDataSource(dataSourceB, (r) => !!(r.data.length % 2)));
+    }, asDataGenerator(dataSourceA, (r) => !!(r.data.length % 2)), asDataGenerator(dataSourceB, (r) => !!(r.data.length % 2)));
     const p1 = await pager.getNextResults(10);
     expect(p1.results).toMatchInlineSnapshot(`
       [

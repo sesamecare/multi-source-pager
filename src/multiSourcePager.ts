@@ -3,7 +3,7 @@ import TinyQueue from 'tinyqueue';
 import { getCursorArray, toCursor } from './cursor';
 import { CollatedDatasource, DataGenerator, DataSource, ResultWithCursor } from './types';
 import { ExtractResultType } from './internal-types';
-import { queuedDataSource } from './queuedDataSource';
+import { asDataGenerator } from './asDataGenerator';
 
 interface QueueEntry {
   result: ResultWithCursor;
@@ -28,13 +28,13 @@ export async function multiSourcePager<Types extends Array<Source>>(
   const cursors: string[] = getCursorArray(options.cursor);
   let total: number | undefined = 0;
 
-  const asDataGenerator = dataSources.map((ds) => ('getGenerator' in ds) ? ds : queuedDataSource(ds));
-  const generators = asDataGenerator.map((ds, index) => ds.getGenerator(cursors[index], true));
+  const dataGenerators = dataSources.map((ds) => ('getGenerator' in ds) ? ds : asDataGenerator(ds));
+  const generators = dataGenerators.map((ds, index) => ds.getGenerator(cursors[index], true));
 
   await Promise.all(generators.map(async (generator, index) => {
     const item = await generator.next();
     if (total !== undefined) {
-      const t = asDataGenerator[index].totalResults();
+      const t = dataGenerators[index].totalResults();
       if (t === undefined) {
         total = undefined;
       } else {

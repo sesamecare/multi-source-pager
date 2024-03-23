@@ -32,6 +32,6 @@ Now, to invoke the pager, you pass some options:
 
 And then just a list of data sources to use for the fetch.
 
-You can convert a DataSource to a DataGenerator using the queuedDataSource function, which also allows you to specify a filter to be applied after the results are fetched.
+You can convert a DataSource to a DataGenerator using the asDataGenerator function, which also allows you to specify a filter to be applied after the results are fetched.
 
 **THERE ARE BUGS** - not because I know what they are but because this is hard and has not been battle tested nearly enough.

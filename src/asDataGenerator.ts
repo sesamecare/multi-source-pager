@@ -1,6 +1,6 @@
 import { DataGenerator, DataSource, ResultWithCursor } from './types';
 
-export function queuedDataSource<T extends ResultWithCursor>(
+export function asDataGenerator<T extends ResultWithCursor>(
   dataSource: DataSource<T>,
   filter?: (result: T) => boolean,
 ): DataGenerator<T> {
