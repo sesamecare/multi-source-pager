@@ -61,6 +61,7 @@
     "vitest": "^1.4.0"
   },
   "dependencies": {
+    "tinyqueue": "^2.0.3",
     "universal-base64": "^2.1.0"
   }
 }

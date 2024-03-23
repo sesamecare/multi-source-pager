@@ -1,10 +1,6 @@
 import { getCursorArray, toCursor } from './cursor';
 import { ExtractResultType } from './internal-types';
-import { DataSource, ResultWithCursor } from './types';
-
-export interface CollatedDatasource<T> {
-  getNextResults(count: number): Promise<{ results: T[], total?: number }>;
-}
+import { CollatedDatasource, DataSource, ResultWithCursor } from './types';
 
 interface WorkingResult {
   result: ResultWithCursor;

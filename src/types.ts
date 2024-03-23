@@ -18,6 +18,12 @@ export interface DataSource<T extends ResultWithCursor> {
   sortKey(result: T): string;
 }
 
+export interface DataGenerator<T extends ResultWithCursor> {
+  getResults(cursor: string | undefined, forward: boolean): AsyncGenerator<T, void, unknown>;
+  sortKey(result: T): string;
+  totalResults(): number | undefined;
+}
+
 /**
  * Types used in the return of the paging functions
  */
@@ -28,4 +34,8 @@ export interface PagedResults<T extends ResultWithCursor, ResultType = OptionalC
   // If total is available from ALL data sources, a total will
   // be returned from the paged set.
   total?: number;
+}
+
+export interface CollatedDatasource<T> {
+  getNextResults(count: number): Promise<{ results: T[], total?: number }>;
 }
