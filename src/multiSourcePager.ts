@@ -1,8 +1,9 @@
 import TinyQueue from 'tinyqueue';
 
 import { getCursorArray, toCursor } from './cursor';
-import { CollatedDatasource, DataGenerator, ResultWithCursor } from './types';
+import { CollatedDatasource, DataGenerator, DataSource, ResultWithCursor } from './types';
 import { ExtractResultType } from './internal-types';
+import { queuedDataSource } from './queuedDataSource';
 
 interface QueueEntry {
   result: ResultWithCursor;
@@ -10,7 +11,9 @@ interface QueueEntry {
   key: string;
 }
 
-export async function queuePager<Types extends Array<DataGenerator<ResultWithCursor>>>(
+type Source = DataGenerator<ResultWithCursor> | DataSource<ResultWithCursor>;
+
+export async function multiSourcePager<Types extends Array<Source>>(
   options: {
     // Compare two results and determine which comes first
     comparator: (a: string, b: string) => number;
@@ -23,10 +26,21 @@ export async function queuePager<Types extends Array<DataGenerator<ResultWithCur
 
   const queue = new TinyQueue<QueueEntry>([], queueCompare);
   const cursors: string[] = getCursorArray(options.cursor);
-  const generators = dataSources.map((dataSource, index) => dataSource.getResults(cursors[index], true));
+  let total: number | undefined = 0;
+
+  const asDataGenerator = dataSources.map((ds) => ('getGenerator' in ds) ? ds : queuedDataSource(ds));
+  const generators = asDataGenerator.map((ds, index) => ds.getGenerator(cursors[index], true));
 
   await Promise.all(generators.map(async (generator, index) => {
     const item = await generator.next();
+    if (total !== undefined) {
+      const t = asDataGenerator[index].totalResults();
+      if (t === undefined) {
+        total = undefined;
+      } else {
+        total += t;
+      }
+    }
     if (!item.done) {
       queue.push({
         result: item.value,
@@ -40,7 +54,7 @@ export async function queuePager<Types extends Array<DataGenerator<ResultWithCur
     async getNextResults(count) {
       const results: ExtractResultType<Types[number]>[] = [];
       while (results.length < count && queue.length > 0) {
-        const { result, index } = queue.pop()!;
+        const { result, index } = queue.pop() as QueueEntry;
         cursors[index] = result.cursor;
         results.push({
           ...result,
@@ -50,11 +64,15 @@ export async function queuePager<Types extends Array<DataGenerator<ResultWithCur
         // Fetch next item from the generator of the data source that the last item came from
         const nextResult = await generators[index].next();
         if (!nextResult.done) {
-          queue.push({ result: nextResult.value, index, key: dataSources[index].sortKey(nextResult.value) });
+          queue.push({
+            result: nextResult.value,
+            index,
+            key: dataSources[index].sortKey(nextResult.value),
+          });
         }
       }
 
-      return { results };
+      return { results, total };
     },
   };
 }

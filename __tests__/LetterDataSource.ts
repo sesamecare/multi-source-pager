@@ -7,13 +7,14 @@ export interface LetterResult {
 }
 
 export class MockLetterSource implements DataSource<LetterResult> {
-  constructor(private results: LetterResult[]) {}
+  constructor(private results: LetterResult[], private pageSize: number) {}
 
-  async getResults(cursor: string | undefined, forward: boolean, limit: number) {
+  async getNextResults(cursor: string | undefined) {
     const startIndex = this.results.findIndex(result => result.cursor > (cursor ?? ''));
     return {
       total: this.results.length,
-      results: startIndex === -1 ? [] : this.results.slice(startIndex, startIndex + limit),
+      hasMore: startIndex + this.pageSize < this.results.length,
+      results: startIndex === -1 ? [] : this.results.slice(startIndex, startIndex + this.pageSize),
     };
   }
 

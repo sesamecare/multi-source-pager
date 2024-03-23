@@ -2,21 +2,20 @@ import { describe, it, expect } from 'vitest';
 
 import { MockLetterSource, mockDoubleLetters, mockLetters } from '../__tests__/LetterDataSource';
 
-import { queuePager } from './queuePager';
-import { queuedDataSource } from './QueuedDataSource';
+import { multiSourcePager } from './multiSourcePager';
+import { queuedDataSource } from './queuedDataSource';
 
 // Comparator for sorting by cursor (ISO date)
 const comparator = (a: string, b: string) => a.localeCompare(b);
 
-describe('stateful pager', () => {
-  const dataSourceA = new MockLetterSource(mockLetters);
-  const dataSourceB = new MockLetterSource(mockDoubleLetters);
+describe('multi source pager', () => {
   it('should return the results in order', async () => {
-
-    for (let i = 0; i < 5; i += 1) {
-      const pager = await queuePager({
+    for (let i = 1; i <= 5; i += 1) {
+      const dataSourceA = new MockLetterSource(mockLetters, i);
+      const dataSourceB = new MockLetterSource(mockDoubleLetters, i);
+      const pager = await multiSourcePager({
         comparator,
-      }, queuedDataSource(dataSourceA, i), queuedDataSource(dataSourceB, i));
+      }, dataSourceA, dataSourceB);
 
       const p1 = await pager.getNextResults(3);
       expect(p1.results.length).toBe(3);
@@ -108,10 +107,12 @@ describe('stateful pager', () => {
     }
   });
 
-  it.only('should work with filters', async () => {
-    const pager = await queuePager({
+  it('should work with filters', async () => {
+    const dataSourceA = new MockLetterSource(mockLetters, 3);
+    const dataSourceB = new MockLetterSource(mockDoubleLetters, 5);
+    const pager = await multiSourcePager({
       comparator,
-    }, queuedDataSource(dataSourceA, 3, (r) => !!(r.data.length % 2)), queuedDataSource(dataSourceB, 5, (r) => !!(r.data.length % 2)));
+    }, queuedDataSource(dataSourceA, (r) => !!(r.data.length % 2)), queuedDataSource(dataSourceB, (r) => !!(r.data.length % 2)));
     const p1 = await pager.getNextResults(10);
     expect(p1.results).toMatchInlineSnapshot(`
       [
