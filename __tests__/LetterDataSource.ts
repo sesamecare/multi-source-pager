@@ -11,10 +11,12 @@ export class MockLetterSource implements DataSource<LetterResult> {
 
   async getNextResults(cursor: string | undefined) {
     const startIndex = this.results.findIndex(result => result.cursor > (cursor ?? ''));
+    const results = startIndex === -1 ? [] : this.results.slice(startIndex, startIndex + this.pageSize);
     return {
       total: this.results.length,
       hasMore: startIndex + this.pageSize < this.results.length,
-      results: startIndex === -1 ? [] : this.results.slice(startIndex, startIndex + this.pageSize),
+      results,
+      cursor: results[results.length - 1].cursor,
     };
   }
 

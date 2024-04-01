@@ -14,18 +14,17 @@ export function asDataGenerator<T extends ResultWithCursor>(
       while (continueFetching) {
         const response = await dataSource.getNextResults(currentCursor);
         total = response.total;
-        if (response.results.length === 0) {
-          continueFetching = false;
-        } else {
-          for (const result of response.results) {
-            if (!filter || filter(result)) {
-              yield result;
-            }
-            currentCursor = result.cursor; // Assuming the cursor for the next fetch is from the last item
+        continueFetching = response.hasMore;
+
+        for (const result of response.results || []) {
+          if (!filter || filter(result)) {
+            yield result;
           }
-          // Continue fetching only if we received as many results as we asked for, implying there might be more.
-          continueFetching = response.hasMore;
+          currentCursor = result.cursor; // Assuming the cursor for the next fetch is from the last item
         }
+        // There is a nuance here - we COULD return this result-set cursor for the last
+        // result in the yield above, and that would avoid fetching unused results next time.
+        currentCursor = response.cursor;
       }
     },
     sortKey: dataSource.sortKey,

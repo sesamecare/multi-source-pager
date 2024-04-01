@@ -13,6 +13,10 @@ export interface DatasourceResults<T extends ResultWithCursor> {
   // If total is available from ALL data sources, a total will
   // be returned from the paged set.
   total?: number;
+  // There can be cases where you don't return results, but the cursor
+  // has advanced anyhow. Once we run out of results, we will use this
+  // cursor.
+  cursor: string;
 }
 
 /**
