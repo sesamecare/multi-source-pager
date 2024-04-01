@@ -65,45 +65,45 @@ describe('multi source pager', () => {
 
       const p3 = await pager.getNextResults(5);
       expect(p3.results).toMatchInlineSnapshot(`
-      [
-        {
-          "cursor": "WyIyMDIzLTAxLTAzVDAwOjAwOjAwLjAwMFojQyIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
-          "data": "C",
-          "type": "letter",
-        },
-        {
-          "cursor": "WyIyMDIzLTAxLTA0VDAwOjAwOjAwLjAwMFojRCIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
-          "data": "D",
-          "type": "letter",
-        },
-        {
-          "cursor": "WyIyMDIzLTAxLTA1VDAwOjAwOjAwLjAwMFojRSIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
-          "data": "E",
-          "type": "letter",
-        },
-        {
-          "cursor": "WyIyMDIzLTAxLTA1VDAwOjAwOjAwLjAwMFojRSIsIjIwMjMtMDEtMDZUMDA6MDA6MDAuMDAwWiNGRiJd",
-          "data": "FF",
-          "type": "letter",
-        },
-        {
-          "cursor": "WyIyMDIzLTAxLTA1VDAwOjAwOjAwLjAwMFojRSIsIjIwMjMtMDEtMDdUMDA6MDA6MDAuMDAwWiNHRyJd",
-          "data": "GG",
-          "type": "letter",
-        },
-      ]
-    `);
+        [
+          {
+            "cursor": "WyIyMDIzLTAxLTAzVDAwOjAwOjAwLjAwMFojQyIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
+            "data": "C",
+            "type": "letter",
+          },
+          {
+            "cursor": "WyIyMDIzLTAxLTA0VDAwOjAwOjAwLjAwMFojRCIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
+            "data": "D",
+            "type": "letter",
+          },
+          {
+            "cursor": "WyIyMDIzLTAxLTA1VDAwOjAwOjAwLjAwMFojRSIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
+            "data": "E",
+            "type": "letter",
+          },
+          {
+            "cursor": "WyIiLCIyMDIzLTAxLTA2VDAwOjAwOjAwLjAwMFojRkYiXQ==",
+            "data": "FF",
+            "type": "letter",
+          },
+          {
+            "cursor": "WyIiLCIyMDIzLTAxLTA3VDAwOjAwOjAwLjAwMFojR0ciXQ==",
+            "data": "GG",
+            "type": "letter",
+          },
+        ]
+      `);
 
       const p4 = await pager.getNextResults(5);
       expect(p4.results).toMatchInlineSnapshot(`
-      [
-        {
-          "cursor": "WyIyMDIzLTAxLTA1VDAwOjAwOjAwLjAwMFojRSIsIjIwMjMtMDEtMDhUMDA6MDA6MDAuMDAwWiNISCJd",
-          "data": "HH",
-          "type": "letter",
-        },
-      ]
-    `);
+        [
+          {
+            "cursor": "WyIiLCIyMDIzLTAxLTA4VDAwOjAwOjAwLjAwMFojSEgiXQ==",
+            "data": "HH",
+            "type": "letter",
+          },
+        ]
+      `);
     }
   });
 
@@ -137,17 +137,17 @@ describe('multi source pager', () => {
           "type": "letter",
         },
         {
-          "cursor": "WyIyMDIzLTAxLTAzVDAwOjAwOjAwLjAwMFojQyIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
+          "cursor": "WyIyMDIzLTAxLTAzVDAwOjAwOjAwLjAwMFojQyIsIiJd",
           "data": "C",
           "type": "letter",
         },
         {
-          "cursor": "WyIyMDIzLTAxLTA0VDAwOjAwOjAwLjAwMFojRCIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
+          "cursor": "WyIyMDIzLTAxLTA0VDAwOjAwOjAwLjAwMFojRCIsIiJd",
           "data": "D",
           "type": "letter",
         },
         {
-          "cursor": "WyIyMDIzLTAxLTA1VDAwOjAwOjAwLjAwMFojRSIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
+          "cursor": "WyIyMDIzLTAxLTA1VDAwOjAwOjAwLjAwMFojRSIsIiJd",
           "data": "E",
           "type": "letter",
         },

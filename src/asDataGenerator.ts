@@ -8,6 +8,11 @@ export function asDataGenerator<T extends ResultWithCursor>(
 
   return {
     async *getGenerator(cursor: string | undefined) {
+      if (cursor === '') {
+        // The special empty string cursor indicates we should not fetch any more.
+        return;
+      }
+
       let currentCursor = cursor;
       let continueFetching = true;
 
