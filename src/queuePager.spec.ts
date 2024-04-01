@@ -82,12 +82,12 @@ describe('multi source pager', () => {
             "type": "letter",
           },
           {
-            "cursor": "WyIiLCIyMDIzLTAxLTA2VDAwOjAwOjAwLjAwMFojRkYiXQ==",
+            "cursor": "WyIyMDIzLTAxLTA1VDAwOjAwOjAwLjAwMFojRSIsIjIwMjMtMDEtMDZUMDA6MDA6MDAuMDAwWiNGRiJd",
             "data": "FF",
             "type": "letter",
           },
           {
-            "cursor": "WyIiLCIyMDIzLTAxLTA3VDAwOjAwOjAwLjAwMFojR0ciXQ==",
+            "cursor": "WyIyMDIzLTAxLTA1VDAwOjAwOjAwLjAwMFojRSIsIjIwMjMtMDEtMDdUMDA6MDA6MDAuMDAwWiNHRyJd",
             "data": "GG",
             "type": "letter",
           },
@@ -98,7 +98,7 @@ describe('multi source pager', () => {
       expect(p4.results).toMatchInlineSnapshot(`
         [
           {
-            "cursor": "WyIiLCIyMDIzLTAxLTA4VDAwOjAwOjAwLjAwMFojSEgiXQ==",
+            "cursor": "WyIyMDIzLTAxLTA1VDAwOjAwOjAwLjAwMFojRSIsIjIwMjMtMDEtMDhUMDA6MDA6MDAuMDAwWiNISCJd",
             "data": "HH",
             "type": "letter",
           },
@@ -137,17 +137,17 @@ describe('multi source pager', () => {
           "type": "letter",
         },
         {
-          "cursor": "WyIyMDIzLTAxLTAzVDAwOjAwOjAwLjAwMFojQyIsIiJd",
+          "cursor": "WyIyMDIzLTAxLTAzVDAwOjAwOjAwLjAwMFojQyIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
           "data": "C",
           "type": "letter",
         },
         {
-          "cursor": "WyIyMDIzLTAxLTA0VDAwOjAwOjAwLjAwMFojRCIsIiJd",
+          "cursor": "WyIyMDIzLTAxLTA0VDAwOjAwOjAwLjAwMFojRCIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
           "data": "D",
           "type": "letter",
         },
         {
-          "cursor": "WyIyMDIzLTAxLTA1VDAwOjAwOjAwLjAwMFojRSIsIiJd",
+          "cursor": "WyIyMDIzLTAxLTA1VDAwOjAwOjAwLjAwMFojRSIsIjIwMjMtMDEtMDJUMDA6MDA6MDAuMDAwWiNCQkIiXQ==",
           "data": "E",
           "type": "letter",
         },

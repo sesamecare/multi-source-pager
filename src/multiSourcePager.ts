@@ -47,8 +47,6 @@ export async function multiSourcePager<Types extends Array<Source>>(
         index,
         key: dataSources[index].sortKey(item.value),
       });
-    } else {
-      cursors[index] = '';
     }
   }));
 
@@ -65,9 +63,7 @@ export async function multiSourcePager<Types extends Array<Source>>(
 
         // Fetch next item from the generator of the data source that the last item came from
         const nextResult = await generators[index].next();
-        if (nextResult.done) {
-          cursors[index] = '';
-        } else {
+        if (!nextResult.done) {
           queue.push({
             result: nextResult.value,
             index,
