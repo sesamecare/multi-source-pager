@@ -46,19 +46,19 @@
     "coconfig": "@openapi-typescript-infra/coconfig"
   },
   "devDependencies": {
-    "@openapi-typescript-infra/coconfig": "^4.3.0",
-    "@semantic-release/exec": "^6.0.3",
-    "@semantic-release/github": "^10.0.2",
-    "@types/node": "^20.11.29",
-    "@typescript-eslint/eslint-plugin": "^7.3.1",
-    "@typescript-eslint/parser": "^7.3.1",
-    "coconfig": "^1.4.1",
-    "eslint": "^8.57.0",
+    "@openapi-typescript-infra/coconfig": "^4.7.1",
+    "@semantic-release/exec": "^7.0.3",
+    "@semantic-release/github": "^11.0.2",
+    "@types/node": "^20.17.32",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "coconfig": "^2.0.0",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-import-resolver-typescript": "^3.6.1",
-    "eslint-plugin-import": "^2.29.1",
-    "typescript": "^5.4.2",
-    "vitest": "^1.4.0"
+    "eslint-import-resolver-typescript": "^4.3.4",
+    "eslint-plugin-import": "^2.31.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.2"
   },
   "dependencies": {
     "tinyqueue": "^2.0.3",
