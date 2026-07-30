@@ -1,7 +1,7 @@
 import TinyQueue from 'tinyqueue';
 
 import { getCursorArray, toCursor } from './cursor';
-import { CollatedDatasource, DataGenerator, DataSource, ResultWithCursor } from './types';
+import { CollatedDatasource, DataGenerator, DataGeneratorOptions, DataSource, ResultWithCursor } from './types';
 import { ExtractResultType } from './internal-types';
 import { asDataGenerator } from './asDataGenerator';
 
@@ -19,7 +19,7 @@ export async function multiSourcePager<Types extends Array<Source>>(
     comparator: (a: string, b: string) => number;
     // Fetch initial results after this cursor
     cursor?: string;
-  },
+  } & DataGeneratorOptions,
   ...dataSources: Types
 ): Promise<CollatedDatasource<ExtractResultType<Types[number]>>> {
   const queueCompare = (a: QueueEntry, b: QueueEntry) => options.comparator(a.key, b.key) || a.index - b.index;
@@ -28,7 +28,11 @@ export async function multiSourcePager<Types extends Array<Source>>(
   const cursors: string[] = getCursorArray(options.cursor);
   let total: number | undefined = 0;
 
-  const dataGenerators = dataSources.map((ds) => ('getGenerator' in ds) ? ds : asDataGenerator(ds));
+  // A generator passed in directly carries its own configuration, so only sources we adapt here
+  // pick up the pager-level options.
+  const dataGenerators = dataSources.map((ds) => ('getGenerator' in ds)
+    ? ds
+    : asDataGenerator(ds, undefined, { maxConsecutiveEmptyPages: options.maxConsecutiveEmptyPages }));
   const generators = dataGenerators.map((ds, index) => ds.getGenerator(cursors[index], true));
 
   await Promise.all(generators.map(async (generator, index) => {

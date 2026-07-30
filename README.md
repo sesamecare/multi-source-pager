@@ -29,9 +29,14 @@ Now, to invoke the pager, you pass some options:
 * a comparator function which will be passed the sortKey of two results and return standard comparison result values
 * a cursor for the starting point of the results
 * edgeCursorsOnly when you only want cursor values for the first and last item (this can save wire bytes)
+* maxConsecutiveEmptyPages (default 10) to bound how many empty-but-hasMore pages a data source may return before we give up on it and stop fetching. Raise it if your sources filter heavily enough to produce long runs of empty pages; this only applies to DataSources the pager adapts for you, not to DataGenerators you pass in already built.
 
 And then just a list of data sources to use for the fetch.
 
-You can convert a DataSource to a DataGenerator using the asDataGenerator function, which also allows you to specify a filter to be applied after the results are fetched.
+You can convert a DataSource to a DataGenerator using the asDataGenerator function, which also allows you to specify a filter to be applied after the results are fetched, and the same options as above:
+
+```typescript
+asDataGenerator(dataSource, (result) => result.visible, { maxConsecutiveEmptyPages: 50 });
+```
 
 **THERE ARE BUGS** - not because I know what they are but because this is hard and has not been battle tested nearly enough.
