@@ -28,6 +28,14 @@ export interface DataSource<T extends ResultWithCursor> {
   sortKey(result: T): string;
 }
 
+export interface DataGeneratorOptions {
+  // A source that reports hasMore while returning nothing makes no progress. Stop fetching
+  // after this many consecutive empty pages rather than spinning on it forever. A source may
+  // legitimately return empty pages while paging past filtered-out rows, so this needs room
+  // to be larger than the longest run of empty pages you expect. Defaults to 10.
+  maxConsecutiveEmptyPages?: number;
+}
+
 /**
  * Underneath, we use generators to fetch the next result. You can
  * use this class directly if you want, or we will translate to it

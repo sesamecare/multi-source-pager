@@ -1,15 +1,18 @@
-import { DataGenerator, DataSource, ResultWithCursor } from './types';
+import { DataGenerator, DataGeneratorOptions, DataSource, ResultWithCursor } from './types';
 
 // A data source that reports hasMore while returning nothing makes no progress, and this loop
 // would spin on it forever without ever yielding - starving the caller rather than failing. A
 // source may legitimately return an empty page while paging past filtered-out rows, so allow a
 // short run of them before concluding the source is stuck.
-const MAX_CONSECUTIVE_EMPTY_PAGES = 10;
+export const DEFAULT_MAX_CONSECUTIVE_EMPTY_PAGES = 10;
 
 export function asDataGenerator<T extends ResultWithCursor>(
   dataSource: DataSource<T>,
   filter?: (result: T) => boolean,
+  options: DataGeneratorOptions = {},
 ): DataGenerator<T> {
+  const maxConsecutiveEmptyPages =
+    options.maxConsecutiveEmptyPages ?? DEFAULT_MAX_CONSECUTIVE_EMPTY_PAGES;
   let total: number | undefined;
 
   return {
@@ -43,7 +46,7 @@ export function asDataGenerator<T extends ResultWithCursor>(
         if (
           continueFetching &&
           (currentCursor === requestedCursor ||
-            consecutiveEmptyPages >= MAX_CONSECUTIVE_EMPTY_PAGES)
+            consecutiveEmptyPages >= maxConsecutiveEmptyPages)
         ) {
           continueFetching = false;
         }

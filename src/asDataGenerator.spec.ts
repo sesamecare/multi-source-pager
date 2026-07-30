@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 
-import { asDataGenerator } from './asDataGenerator';
-import { DataSource, DatasourceResults, ResultWithCursor } from './types';
+import { asDataGenerator, DEFAULT_MAX_CONSECUTIVE_EMPTY_PAGES } from './asDataGenerator';
+import { DataGeneratorOptions, DataSource, DatasourceResults, ResultWithCursor } from './types';
 
 interface Letter extends ResultWithCursor {
   data: string;
@@ -11,12 +11,22 @@ function letter(data: string, cursor: string): Letter {
   return { data, cursor, type: 'letter' };
 }
 
-async function drain(dataSource: DataSource<Letter>) {
+async function drain(dataSource: DataSource<Letter>, options?: DataGeneratorOptions) {
   const results: Letter[] = [];
-  for await (const result of asDataGenerator(dataSource).getGenerator(undefined, true)) {
+  for await (const result of asDataGenerator(dataSource, undefined, options).getGenerator(undefined, true)) {
     results.push(result);
   }
   return results;
+}
+
+function alwaysEmpty(counter: { fetches: number }): DataSource<Letter> {
+  return {
+    async getNextResults() {
+      counter.fetches += 1;
+      return { results: [], hasMore: true, cursor: `cursor-${counter.fetches}` };
+    },
+    sortKey: (result) => result.cursor,
+  };
 }
 
 describe('asDataGenerator', () => {
@@ -25,17 +35,17 @@ describe('asDataGenerator', () => {
     // for six days. hasMore was computed from the raw fetch rather than from the filtered
     // page, so it stayed true while every page came back empty. The cursor changed each call
     // (it was derived from the current time), so it even looked like progress was happening.
-    let fetches = 0;
-    const stuck: DataSource<Letter> = {
-      async getNextResults() {
-        fetches += 1;
-        return { results: [], hasMore: true, cursor: `cursor-${fetches}` };
-      },
-      sortKey: (result) => result.cursor,
-    };
+    const counter = { fetches: 0 };
 
-    expect(await drain(stuck)).toEqual([]);
-    expect(fetches).toBe(10);
+    expect(await drain(alwaysEmpty(counter))).toEqual([]);
+    expect(counter.fetches).toBe(DEFAULT_MAX_CONSECUTIVE_EMPTY_PAGES);
+  });
+
+  it('honors a caller-supplied empty page limit', async () => {
+    const counter = { fetches: 0 };
+
+    expect(await drain(alwaysEmpty(counter), { maxConsecutiveEmptyPages: 3 })).toEqual([]);
+    expect(counter.fetches).toBe(3);
   });
 
   it('stops when a source hands back the cursor it was given', async () => {
